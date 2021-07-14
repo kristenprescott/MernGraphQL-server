@@ -67,5 +67,5 @@ module.exports = gql`
     newPost: Post!
   }
 `;
-// subscriptions are used for polling, chat apps, etc.
+
 // https://www.npmjs.com/package/graphql-subscriptions#pubsub-implementations (helps to ctrl + F "const pubsub")
