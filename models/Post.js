@@ -12,12 +12,22 @@ const postSchema = new Schema({
       body: String,
       username: String,
       createdAt: String,
-      likes: [
-        {
-          username: String,
-          createdAt: String,
-        },
-      ],
+      // TODO: figure out/finish adding commentComments & commentLikes
+      // comments: [
+      //   {
+      //     body: String,
+      //     username: String,
+      //     createdAt: String,
+      //   },
+      // ],
+      // likes: [
+      //   {
+      //     username: String,
+      //     createdAt: String,
+      //   },
+      // ],
+      // likeCount: Number,
+      // commentCount: Number,
     },
   ],
   likes: [
@@ -26,6 +36,8 @@ const postSchema = new Schema({
       createdAt: String,
     },
   ],
+  likeCount: Number,
+  commentCount: Number,
   user: {
     type: Schema.Types.ObjectId,
     ref: "users",
