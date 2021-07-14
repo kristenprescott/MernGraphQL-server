@@ -44,6 +44,10 @@ module.exports = {
 
       const post = await newPost.save();
 
+      context.pubsub.publish("NEW_POST", {
+        newPost: post,
+      });
+
       return post;
     },
     async deletePost(_, { postId }, context) {
@@ -53,7 +57,7 @@ module.exports = {
         const post = await post.findById(postId);
         if (user.username === post.username) {
           await post.delete();
-          return `Success! Post has been deleted, ${user.username}.`;
+          return `Success! Post has been deleted.`;
         } else {
           throw new AuthenticationError("Action not allowed.");
         }
@@ -66,9 +70,9 @@ module.exports = {
 
       const post = await Post.findById(postId);
       if (post) {
-        if (post.likes.find((like) => like.usernam === username)) {
+        if (post.likes.find((like) => like.username === username)) {
           // Post already likes, unlike it:
-          post.likes = post.likes.filter((like) => likes.username !== user);
+          post.likes = post.likes.filter((like) => like.username !== username);
         } else {
           // Not liked, like post:
           post.likes.push({
@@ -81,18 +85,67 @@ module.exports = {
         return post;
       } else throw new UserInputError("Post not found.");
     },
-    // async tagPost(_, { postId }) {
-    //   const post = await Post.findBeId(postId);
-    //   cont newTag = await
-
-    //   if (post) {
-    //     post.tags.push({
-
-    //     });
-
-    //     await post.save();
-    //     return post;
-    //   } else throw new UserInputError("Post not found.");
-    // },
+  },
+  Subscription: {
+    newPost: {
+      // NEW_POST == EventEmitter, convention says ALL CAPS NAMES
+      subscribe: (_, __, { pubsub }) => pubsub.asyncIterator("NEW_POST"),
+    },
   },
 };
+/*
+Getting started with your first subscription
+To begin with GraphQL subscriptions, start by defining a GraphQL Subscription type in your schema:
+
+```
+type Subscription {
+    somethingChanged: Result
+}
+
+type Result {
+    id: String
+}
+Next, add the Subscription type to your schema definition:
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+```
+
+Now, let's create a simple PubSub instance - it is a simple pubsub implementation, based on EventEmitter. Alternative EventEmitter implementations can be passed by an options object to the PubSub constructor.
+
+```
+import { PubSub } from 'graphql-subscriptions';
+
+export const pubsub = new PubSub();
+```
+
+Now, implement your Subscriptions type resolver, using the pubsub.asyncIterator to map the event you need:
+
+```
+const SOMETHING_CHANGED_TOPIC = 'something_changed';
+
+export const resolvers = {
+  Subscription: {
+    somethingChanged: {
+      subscribe: () => pubsub.asyncIterator(SOMETHING_CHANGED_TOPIC),
+    },
+  },
+}
+```
+
+Subscriptions resolvers are not a function, but an object with subscribe method, that returns AsyncIterable.
+
+Now, the GraphQL engine knows that somethingChanged is a subscription, and every time we use pubsub.publish over this topic - it will publish it using the transport we use:
+
+```
+pubsub.publish(SOMETHING_CHANGED_TOPIC, { somethingChanged: { id: "123" }});
+```
+
+**Note** that the default PubSub implementation is intended for demo purposes. It only works if you have a single instance of your server and doesn't scale beyond a couple of connections. For production usage you'll want to use one of the PubSub implementations backed by an external store. (e.g. Redis)
+
+
+
+*/

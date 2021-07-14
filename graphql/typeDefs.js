@@ -6,16 +6,12 @@ module.exports = gql`
     title: String!
     body: String!
     username: String!
-    tags: [String]!
-    selectedFile: String!
+    tags: [String]
+    selectedFile: String
     createdAt: String!
     comments: [Comment]!
     likes: [Like]!
   }
-  # type Tag {
-  #   body: String!
-  #   createdAt: String!
-  # }
   type Comment {
     id: ID!
     createdAt: String!
@@ -51,14 +47,19 @@ module.exports = gql`
     createPost(
       title: String!
       body: String!
-      tags: [String]!
+      tags: [String]
       selectedFile: String
     ): Post!
     deletePost(postId: ID!): String!
+    likePost(postId: ID!): Post!
     createComment(postId: String!, body: String!): Post!
     deleteComment(postId: ID!, commentId: ID!): Post!
-    likePost(postId: ID!): Post!
     likeComment(commentId: ID!): Comment!
-    tagPost(postId: ID!, body: String!): Post!
+    commentComment(commentId: ID!): Comment!
+  }
+  type Subscription {
+    newPost: Post!
   }
 `;
+// subscriptions are used for polling, chat apps, etc.
+// https://www.npmjs.com/package/graphql-subscriptions#pubsub-implementations (helps to ctrl + F "const pubsub")

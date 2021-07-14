@@ -10,6 +10,10 @@ const { SECRET } = require("../../config");
 const User = require("../../models/User");
 
 function generateToken(user) {
+  // set expiry date to 1 mo. + 1 hr. (mostly just so later it can go back to 1 hr.)
+  let d = new Date();
+  d.setDate(d.getDate() + 30);
+
   return jwt.sign(
     {
       id: user.id,
@@ -17,7 +21,7 @@ function generateToken(user) {
       username: user.username,
     },
     SECRET,
-    { expiresIn: `1h` }
+    { expiresIn: `1h + ${d}` }
   );
 }
 
