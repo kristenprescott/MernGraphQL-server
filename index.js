@@ -1,35 +1,45 @@
+require("dotenv").config();
 const { ApolloServer } = require("apollo-server");
 const gql = require("graphql-tag");
-// mongoose: ORM library, Object Relational Mapper, which allows interface w MongoDB
 const mongoose = require("mongoose");
 
-const { MONGODB_URI } = require("./config.js");
+const Post = require("./models/Post");
+const { MONGODB } = require("./config.js");
 
-// types for GraphQL:
+const port = process.env.PORT || 5000;
+
 const typeDefs = gql`
+  type Post {
+    id: ID!
+    body: String!
+    createdAt: String!
+    username: String!
+  }
   type Query {
-    # String! <--- ! means required
-    sayHi: String!
+    getPosts: [Post]
   }
 `;
 
-// each query/mutation/subscription has a corresponding resolver
 const resolvers = {
   Query: {
-    sayHi: () => "Hello, world.",
+    async getPosts() {
+      try {
+        const posts = await Post.find();
+        return posts;
+      } catch (err) {
+        throw new Error(err);
+      }
+    },
   },
 };
 
-// set up Apollo server:
 const server = new ApolloServer({
-  // typeDefs & resolvers
   typeDefs,
   resolvers,
 });
 
-// chain our server to mongodb:
 mongoose
-  .connect(MONGODB_URI, {
+  .connect(MONGODB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -44,16 +54,16 @@ mongoose
     *----------------------------------*
     |----------------------------------|
     |-------- Server running: ---------|
-    |----------------------------------|
+    |---------- port: ${port} ------------|
     |---- ${res.url} ------|
     |----------------------------------|
     |----------------------------------|
     `);
-  })
-  .catch((err) => {
-    console.log(`DB Connection Error: ${err.message}`);
-    process.exit(-1);
   });
+//   .catch((err) => {
+//     console.log(`DB Connection Error: ${err.message}`);
+//     process.exit(-1);
+//   });
 /*
 At localhost:5000 is the GraphQL playground, how cool is that?
 */
