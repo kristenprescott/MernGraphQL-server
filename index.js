@@ -34,11 +34,8 @@ mongoose
     |----------------------------------|
     |----------------------------------|
     `);
+  })
+  .catch((err) => {
+    console.log(`DB Connection Error: ${err.message}`);
+    process.exit(-1);
   });
-//   .catch((err) => {
-//     console.log(`DB Connection Error: ${err.message}`);
-//     process.exit(-1);
-//   });
-/*
-At localhost:5000 is the GraphQL playground, how cool is that?
-*/
