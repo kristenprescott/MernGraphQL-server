@@ -1,13 +1,14 @@
 const postsResolvers = require("./posts");
 const usersResolvers = require("./users");
 const commentsResolvers = require("./comments");
+// const commentsCommentsResolvers = require("./commentsComments");
 
 module.exports = {
   Post: {
     likeCount: (parent) => parent.likes.length,
     commentCount: (parent) => parent.comments.length,
   },
-  // TODO: figure out/finish adding commentComments & commentLikes
+  // // TODO: figure out/finish adding commentComments & commentLikes
   // Comments: {
   //   likeCount(parent) {
   //     return parent.likes.length;
@@ -23,6 +24,7 @@ module.exports = {
     ...usersResolvers.Mutation,
     ...postsResolvers.Mutation,
     ...commentsResolvers.Mutation,
+    // ...commentsCommentsResolvers.Mutation,
   },
   Subscription: {
     ...postsResolvers.Subscription,
