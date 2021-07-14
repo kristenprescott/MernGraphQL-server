@@ -2,12 +2,56 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
 
-const { validateRegisterInput } = require("../../utils/validators");
+const {
+  validateRegisterInput,
+  validateLoginInput,
+} = require("../../utils/validators");
 const { SECRET } = require("../../config");
 const User = require("../../models/User");
 
+function generateToken(user) {
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    },
+    SECRET,
+    { expiresIn: `1h` }
+  );
+}
+
 module.exports = {
   Mutation: {
+    async login(_, { username, password }) {
+      const { errors, valid } = validateLoginInput(username, password);
+
+      if (!valid) {
+        throw new UserInputError("Invalid input.", { errors });
+      }
+
+      const user = await User.findOne({ username });
+
+      if (!user) {
+        errors.general = "User not found.";
+        throw new UserInputError("User not found.", { errors });
+      }
+
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        errors.general = "Invalid credentials.";
+        throw new UserInputError("Invalid credentials.", { errors });
+      }
+
+      const token = generateToken(user);
+
+      return {
+        ...user._doc,
+        id: user._id,
+        token,
+      };
+    },
+
     // register(parents, args, context, info) // <<--- all avail. params
     async register(
       _,
@@ -45,15 +89,7 @@ module.exports = {
 
       const res = await newUser.save();
 
-      const token = jwt.sign(
-        {
-          id: res.id,
-          email: res.email,
-          username: res.username,
-        },
-        SECRET,
-        { expiresIn: `1h` }
-      );
+      const token = generateToken(res);
 
       return {
         ...res._doc,
@@ -63,32 +99,3 @@ module.exports = {
     },
   },
 };
-
-/*
-TEST REGISTER:
-{
-  "data": {
-    "register": {
-      "id": "60ee451a59f904ec7e82e983",
-      "email": "user@email.com",
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZWU0NTFhNTlmOTA0ZWM3ZTgyZTk4MyIsImVtYWlsIjoidXNlckBlbWFpbC5jb20iLCJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE2MjYyMjc5OTQsImV4cCI6MTYyNjIzMTU5NH0.0ktKpF10byVmvJf4MUlyBaSB7I_YFdHRnwMiIuYdIJg",
-      "username": "user",
-      "createdAt": "2021-07-14T01:59:54.837Z"
-    }
-  }
-}
-*/
-
-// // GET all users:
-// module.exports = {
-//   Query: {
-//     async getUsers() {
-//       try {
-//         const users = await User.find();
-//         return users;
-//       } catch (err) {
-//         throw new Error(err);
-//       }
-//     },
-//   },
-// };
