@@ -6,10 +6,10 @@ module.exports.validateRegisterInput = (
 ) => {
   const errors = {};
   if (username.trim() === "") {
-    errors.username = "This field is required.";
+    errors.username = "Username is required.";
   }
   if (email.trim() === "") {
-    errors.email = "This field is required.";
+    errors.email = "Email is required.";
   } else {
     // regEx to test for valid email addy:
     const regEx = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
@@ -18,7 +18,7 @@ module.exports.validateRegisterInput = (
     }
   }
   if (password === "") {
-    errors.password = "This field is required.";
+    errors.password = "Password is required.";
   } else if (password !== confirmPassword) {
     errors.confirmPassword = "Passwords don't match.";
   }
@@ -33,10 +33,10 @@ module.exports.validateRegisterInput = (
 module.exports.validateLoginInput = (username, password) => {
   const errors = {};
   if (username.trim() === "") {
-    errors.username = "This field is required.";
+    errors.username = "Username is required.";
   }
   if (password === "") {
-    errors.password = "This field is required.";
+    errors.password = "Password is required.";
   }
 
   return {

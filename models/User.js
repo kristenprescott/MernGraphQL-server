@@ -4,6 +4,8 @@ const userSchema = new Schema({
   username: String,
   password: String,
   email: String,
+  // TODO: add userImage
+  // userImage: String,
   createdAt: String,
 });
 

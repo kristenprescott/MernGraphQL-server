@@ -72,11 +72,7 @@ module.exports = gql`
     likePost(postId: ID!): Post!
     createComment(postId: String!, body: String!): Post!
     deleteComment(postId: ID!, commentId: ID!): Post!
-    likeComment(commentId: ID!): Comment!
-    # createCommentComment(commentId: ID!): Comment!
-    # likeCommentComment(commentId: ID!): Comment!
-    # # createCommentComment(commentId: ID!): commentComment!
-    # # likeCommentComment(commentId: ID!): likeComment!
+    # likeComment(commentId: ID!): Comment!
   }
   type Subscription {
     newPost: Post!

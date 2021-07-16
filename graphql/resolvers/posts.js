@@ -31,11 +31,11 @@ module.exports = {
     async createPost(_, { title, body, tags, selectedFile }, context) {
       const user = checkAuth(context);
 
-      if (args.body.trim() === "") {
-        throw new Error(
-          "You didn't write anything in your post - the post cannot be empty."
-        );
-      }
+      // if (args.body.trim() === "") {
+      //   throw new Error(
+      //     "You didn't write anything in your post - the post cannot be empty."
+      //   );
+      // }
 
       // there is def a user here at this point
       const newPost = new Post({

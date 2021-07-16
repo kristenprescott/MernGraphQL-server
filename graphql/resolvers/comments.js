@@ -30,29 +30,29 @@ module.exports = {
         throw new UserInputError("Post not found.");
       }
     },
-    // TODO: figure out/finish adding commentComments & commentLikes
-    async likeComment(_, { commentId }, context) {
-      const { username } = checkAuth(context);
+    // // TODO: figure out/finish adding commentComments & commentLikes
+    // async likeComment(_, { commentId }, context) {
+    //   const { username } = checkAuth(context);
 
-      const comment = await Comment.findById(commentId);
-      if (comment) {
-        if (comment.likes.find((like) => like.username === username)) {
-          // Comment already likes, unlike it:
-          comment.likes = comment.likes.filter(
-            (like) => like.username !== username
-          );
-        } else {
-          // Not liked, like comment:
-          comment.likes.push({
-            username,
-            createdAt: new Date().toISOString(),
-          });
-        }
+    //   const comment = await Comment.findById(commentId);
+    //   if (comment) {
+    //     if (comment.likes.find((like) => like.username === username)) {
+    //       // Comment already likes, unlike it:
+    //       comment.likes = comment.likes.filter(
+    //         (like) => like.username !== username
+    //       );
+    //     } else {
+    //       // Not liked, like comment:
+    //       comment.likes.push({
+    //         username,
+    //         createdAt: new Date().toISOString(),
+    //       });
+    //     }
 
-        await comment.save();
-        return comment;
-      } else throw new UserInputError("Comment not found.");
-    },
+    //     await comment.save();
+    //     return comment;
+    //   } else throw new UserInputError("Comment not found.");
+    // },
     // createCommentComment: async (_, { commentId, body }, context) => {
     //   const { username } = checkAuth(context);
     //   if (body.trim() === "") {
