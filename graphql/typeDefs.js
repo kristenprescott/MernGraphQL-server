@@ -58,10 +58,11 @@ module.exports = gql`
     ): Post!
     deletePost(postId: ID!): String!
     likePost(postId: ID!): Post!
+    # TODO: fix postId type here and in client/src/pages/SinglePost
     createComment(postId: String!, body: String!): Post!
+    # createComment(postId: ID!, body: String!): Post!
     deleteComment(postId: ID!, commentId: ID!): Post!
     likeComment(commentId: ID!): Comment!
-    commentComment(commentId: ID!): Comment!
   }
   type Subscription {
     newPost: Post!
